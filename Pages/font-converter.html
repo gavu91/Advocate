@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>ADVOCATE</title>
+    <link rel="icon" href="../THEME/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
+    <link href="../THEME/css/style.css" rel="stylesheet">
+    <link href="../THEME/css/themes/all-themes.css" rel="stylesheet" />
+    <link href="../custom.css" rel="stylesheet" />
+</head>
+<body class="theme-grey">
+    <div class="page-loader-wrapper">
+        <div class="loader">
+            <div class="preloader">
+                <div class="spinner-layer pl-light-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p>Please wait...</p>
+        </div>
+    </div>
+    <div class="overlay"></div>
+  
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                Font Convertor
+                            </h2>
+                        </div>
+                        <div class="body">
+                            <div class="doc">
+                                    <button type="button" class="btn btn-default" onclick="saveFile();"><i class="material-icons">save</i> Save</button>
+                                    <button type="button" class="btn btn-default" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
+                                    <button type="button" class="btn btn-default" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
+                                    <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
+                                    <select class="mdb-select" onchange="changeFontSize(this)">
+                                            <option value="" disabled selected>Font Size</option>
+                                            <option value="xx-small">xx-small</option>
+                                            <option value="x-small">x-small</option>
+                                            <option value="small">small</option>
+                                            <option value="medium">medium</option>
+                                            <option value="large">large</option>
+                                            <option value="x-large">x-large</option>
+                                            <option value="xx-large">xx-large</option>
+                                          </select>
+                                    <!-- <div style="text-align: right;color: red;margin-bottom: 5px;">
+                                        Type in Gujarati (Press Ctrl+g to change between English and Gujarati)
+                                </div> -->
+                                    <div size="A4" contenteditable="true" id="transliterateTextarea"  class="docpage"></div>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../THEME/plugins/jquery/jquery.min.js"></script>
+    <script src="../THEME/plugins/bootstrap/js/bootstrap.js"></script>
+    <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+    <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="../THEME/plugins/node-waves/waves.js"></script>
+    <script src="../THEME/js/admin.js"></script>
+    <script src="../THEME/js/demo.js"></script>
+    <script src="../THEME/jspdf.min.js"></script>
+    <script type="text/javascript">
+      var electron=  require('electron');
+        var remote = require('electron').remote; 
+    
+        function saveFile(){
+            var fs = require('fs');
+            remote.dialog.showSaveDialog((fileName) => {
+                if (fileName === undefined){
+                    console.log("You didn't save the file");
+                    return;
+                }
+                var pdf = require('html-pdf');
+                var options = { format: 'A4' };
+                pdf.create($("#transliterateTextarea").html(), options).toFile(fileName, function(err, res) {
+                    if (err) return console.log(err);
+                    const msgoptions = {
+                                        type: 'info',
+                                        buttons: ['Ok'],
+                                        defaultId: 2,
+                                        title: 'Success',
+                                        message: 'The file has been succesfully saved'
+                                    };
+
+                                    remote.dialog.showMessageBox(null, msgoptions, (response, checkboxChecked) => {
+                                        console.log(response);
+                                        console.log(checkboxChecked);
+                                    });
+                });
+            });
+        }
+
+        function changeFontSize(obj){
+            document.execCommand("fontSize", false, "7");
+            var fontElements = document.getElementsByTagName("font");
+            for (var i = 0, len = fontElements.length; i < len; ++i) {
+                if (fontElements[i].size == "7") {
+                    fontElements[i].removeAttribute("size");
+                    fontElements[i].style.fontSize =$(obj).val();
+                }
+            }
+        }
+    </script>
+    <script>if (window.module) module = window.module;</script>
+</body>
+
+</html>

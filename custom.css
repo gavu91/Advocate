@@ -1,0 +1,25 @@
+section.content{
+    margin: 20px !important; 
+}
+
+.sidebar .menu .list .zeroMenu::before {
+    content: '0' !important;
+}
+
+.doc .docpage {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background:lightgoldenrodyellow;
+    position: relative;
+    font-size: 14px;
+    font-family: "gujarati-saral-font";
+  }
+
+@font-face
+{
+    font-family: "gujarati-saral-font";
+    src: url("fonts/Gujrati-Saral-1.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
