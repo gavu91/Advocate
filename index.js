@@ -20,7 +20,6 @@ app.on('ready', function () {
   mainWindow.on('closed', function () {
     app.quit();
   });
-
   // Build menu from template
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
   // Insert menu

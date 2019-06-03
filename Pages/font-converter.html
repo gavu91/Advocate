@@ -50,6 +50,7 @@
                                     <button type="button" class="btn btn-default" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
                                     <button type="button" class="btn btn-default" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
                                     <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
+                                    <button type="button" class="btn btn-default" onclick="openMarginDialog();">Margins</button>
                                     <select class="mdb-select" onchange="changeFontSize(this)">
                                             <option value="" disabled selected>Font Size</option>
                                             <option value="xx-small">xx-small</option>
@@ -60,9 +61,6 @@
                                             <option value="x-large">x-large</option>
                                             <option value="xx-large">xx-large</option>
                                           </select>
-                                    <!-- <div style="text-align: right;color: red;margin-bottom: 5px;">
-                                        Type in Gujarati (Press Ctrl+g to change between English and Gujarati)
-                                </div> -->
                                     <div size="A4" contenteditable="true" id="transliterateTextarea"  class="docpage"></div>
                               </div>
                         </div>
@@ -83,8 +81,35 @@
     <script src="../THEME/jspdf.min.js"></script>
     <script type="text/javascript">
       var electron=  require('electron');
-        var remote = require('electron').remote; 
-    
+      var path=  require('path');
+        var remote = require('electron').remote;
+
+        //receive margins data from popupWindow
+        remote.ipcMain.on('margins', (event, data) => {
+            console.log(data);
+            $("#transliterateTextarea").css({
+                "padding-left":data.left + "in",
+                "padding-top":data.top + "in",
+                "padding-bottom":data.bottom + "in",
+                "padding-right":data.right + "in"
+            });
+        })
+        
+        function openMarginDialog(){
+            var currentWindow = remote.getCurrentWindow();
+            var popupWindow = new remote.BrowserWindow({parent:currentWindow,show:false, width: 400, height: 350});
+            popupWindow.setMenu(null);
+            const filePath = path.join(
+                                    'file://', 
+                                    process.cwd(), 
+                                    'Modal/page-layout.html'
+                                );
+            popupWindow.loadURL(filePath);
+             popupWindow.show();
+            popupWindow.on('closed', function () {
+            });
+        }
+
         function saveFile(){
             var fs = require('fs');
             remote.dialog.showSaveDialog((fileName) => {
