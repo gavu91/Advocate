@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
     <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../THEME/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet">
     <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
     <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
     <link href="../THEME/css/style.css" rel="stylesheet">
@@ -45,24 +46,39 @@
                             </h2>
                         </div>
                         <div class="body">
-                            <div class="doc">
-                                    <button type="button" class="btn btn-default" onclick="saveFile();"><i class="material-icons">save</i> Save</button>
-                                    <button type="button" class="btn btn-default" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
-                                    <button type="button" class="btn btn-default" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
-                                    <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
-                                    <button type="button" class="btn btn-default" onclick="openMarginDialog();">Margins</button>
-                                    <select class="mdb-select" onchange="changeFontSize(this)">
-                                            <option value="" disabled selected>Font Size</option>
-                                            <option value="xx-small">xx-small</option>
-                                            <option value="x-small">x-small</option>
-                                            <option value="small">small</option>
-                                            <option value="medium">medium</option>
-                                            <option value="large">large</option>
-                                            <option value="x-large">x-large</option>
-                                            <option value="xx-large">xx-large</option>
-                                          </select>
-                                    <div size="A4" contenteditable="true" id="transliterateTextarea"  class="docpage"></div>
-                              </div>
+                            <div>
+                                <button type="button" class="btn btn-default" onclick="saveFile();"><i class="material-icons">save</i> Save</button>
+                                <button type="button" class="btn btn-default" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
+                                <button type="button" class="btn btn-default" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
+                                <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
+                                <button type="button" class="btn btn-default" onclick="openMarginDialog();">Margins</button>
+                                <select class="show-tick" onchange="changeFontSize(this)">
+                                    <option value="" disabled selected>Font Size</option>
+                                    <option value="xx-small">xx-small</option>
+                                    <option value="x-small">x-small</option>
+                                    <option value="small">small</option>
+                                    <option value="medium">medium</option>
+                                    <option value="large">large</option>
+                                    <option value="x-large">x-large</option>
+                                    <option value="xx-large">xx-large</option>
+                                </select>
+                                <div class="btn-group">
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            SUCCESS <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
+                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Another action</a></li>
+                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Something else here</a></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Separated link</a></li>
+                                        </ul>
+                                    </div>
+                            </div> 
+                           
+                            <div class="doc"> 
+                                <div size="A4" contenteditable="true" id="transliterateTextarea"  class="docpage"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,81 +89,14 @@
     <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
     <script src="../THEME/plugins/jquery/jquery.min.js"></script>
     <script src="../THEME/plugins/bootstrap/js/bootstrap.js"></script>
+    <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.min.js"></script>
     <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.js"></script>
     <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
     <script src="../THEME/plugins/node-waves/waves.js"></script>
     <script src="../THEME/js/admin.js"></script>
     <script src="../THEME/js/demo.js"></script>
-    <script src="../THEME/jspdf.min.js"></script>
-    <script type="text/javascript">
-      var electron=  require('electron');
-      var path=  require('path');
-        var remote = require('electron').remote;
-
-        //receive margins data from popupWindow
-        remote.ipcMain.on('margins', (event, data) => {
-            console.log(data);
-            $("#transliterateTextarea").css({
-                "padding-left":data.left + "in",
-                "padding-top":data.top + "in",
-                "padding-bottom":data.bottom + "in",
-                "padding-right":data.right + "in"
-            });
-        })
-        
-        function openMarginDialog(){
-            var currentWindow = remote.getCurrentWindow();
-            var popupWindow = new remote.BrowserWindow({parent:currentWindow,show:false, width: 400, height: 350});
-            popupWindow.setMenu(null);
-            const filePath = path.join(
-                                    'file://', 
-                                    process.cwd(), 
-                                    'Modal/page-layout.html'
-                                );
-            popupWindow.loadURL(filePath);
-             popupWindow.show();
-            popupWindow.on('closed', function () {
-            });
-        }
-
-        function saveFile(){
-            var fs = require('fs');
-            remote.dialog.showSaveDialog((fileName) => {
-                if (fileName === undefined){
-                    console.log("You didn't save the file");
-                    return;
-                }
-                var pdf = require('html-pdf');
-                var options = { format: 'A4' };
-                pdf.create($("#transliterateTextarea").html(), options).toFile(fileName, function(err, res) {
-                    if (err) return console.log(err);
-                    const msgoptions = {
-                                        type: 'info',
-                                        buttons: ['Ok'],
-                                        defaultId: 2,
-                                        title: 'Success',
-                                        message: 'The file has been succesfully saved'
-                                    };
-
-                                    remote.dialog.showMessageBox(null, msgoptions, (response, checkboxChecked) => {
-                                        console.log(response);
-                                        console.log(checkboxChecked);
-                                    });
-                });
-            });
-        }
-
-        function changeFontSize(obj){
-            document.execCommand("fontSize", false, "7");
-            var fontElements = document.getElementsByTagName("font");
-            for (var i = 0, len = fontElements.length; i < len; ++i) {
-                if (fontElements[i].size == "7") {
-                    fontElements[i].removeAttribute("size");
-                    fontElements[i].style.fontSize =$(obj).val();
-                }
-            }
-        }
-    </script>
+    <script src="../THEME/jspdf.min.js"></script> 
+    <script src="../scripts/font-convertor.js"></script>  
     <script>if (window.module) module = window.module;</script>
 </body>
 

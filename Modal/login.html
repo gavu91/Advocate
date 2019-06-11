@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>ADVOCATE</title>
+    <link rel="icon" href="../THEME/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
+    <link href="../THEME/css/style.css" rel="stylesheet">
+    <link href="../THEME/css/themes/all-themes.css" rel="stylesheet" />
+    <link href="../custom.css" rel="stylesheet" />
+    <style>
+        .card{
+            margin: 0 !important;
+        } 
+    </style>
+</head>
+<body>
+    <div class="card"> 
+        <div class="body">
+            <form>
+                <label for="email_address">Email Address</label>
+                <div class="form-group">
+                    <div class="form-line">
+                        <input type="text" id="email_address" class="form-control" placeholder="Enter your email address">
+                    </div>
+                </div>
+                <label for="password">Password</label>
+                <div class="form-group">
+                    <div class="form-line">
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password">
+                    </div>
+                </div> 
+                <button type="button" onclick="login()" class="btn btn-primary m-t-15 waves-effect">LOGIN</button>
+            </form>
+        </div>
+    </div>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../THEME/plugins/jquery/jquery.min.js"></script>
+    <script src="../THEME/plugins/bootstrap/js/bootstrap.js"></script> 
+    <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="../THEME/plugins/node-waves/waves.js"></script>
+    <script src="../THEME/js/admin.js"></script>
+    <script src="../THEME/js/demo.js"></script>
+    <script src="../THEME/jspdf.min.js"></script> 
+    <script src="../scripts/font-convertor.js"></script>  
+    <script type="text/javascript">
+        var electron=  require('electron');
+        var remote = require('electron').remote;  
+        
+        function login(){
+            ipc.send('login','logindone');
+            var window = remote.getCurrentWindow();
+            window.close();
+        }    
+    </script>
+    <script>if (window.module) module = window.module;</script>
+</body>
+</html>

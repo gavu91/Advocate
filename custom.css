@@ -1,3 +1,36 @@
+
+@font-face
+{
+    font-family: "gujarati-saral-1";
+    src: url("fonts/Gujrati-Saral-1.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face
+{
+    font-family: "gujarati-saral-2";
+    src: url("fonts/G-SARAL3.TTF");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face
+{
+    font-family: "bamart";
+    src: url("fonts/BAMART.TTF");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face
+{
+    font-family: "bamartb";
+    src: url("fonts/BAMARTB.TTF");
+    font-weight: normal;
+    font-style: normal;
+}
+ 
 section.content{
     margin: 20px !important; 
 }
@@ -12,14 +45,7 @@ section.content{
     padding: 1in;
     background:lightgoldenrodyellow;
     position: relative;
-    font-size: 14px;
-    font-family: "gujarati-saral-font";
+    font-size: 14px; 
   }
 
-@font-face
-{
-    font-family: "gujarati-saral-font";
-    src: url("fonts/Gujrati-Saral-1.ttf");
-    font-weight: normal;
-    font-style: normal;
-}
+
