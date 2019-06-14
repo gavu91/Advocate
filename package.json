@@ -3,18 +3,26 @@
   "version": "1.0.0",
   "description": "advocate's desktop application",
   "main": "index.js",
+  "author": "Dev Solutions",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager . advocate --asar=true --platform win32 --arch x64 --out dist/  --overwrite",
+    "setup": "electron-installer-windows --src dist/advocate-win32-x64/ --dest dist/installers/"
   },
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "electron": "^4.1.1",
     "electron-fetch": "^1.3.0",
     "electron-modal": "^1.0.0",
     "electron-packager": "^13.1.1",
+    "electron-squirrel-startup": "^1.0.0",
     "html-pdf": "^2.2.0",
     "jquery": "^3.3.1",
     "macaddress": "^0.2.9"
+  },
+  "devDependencies": {
+    "electron-installer-windows": "*",
+    "electron-packager": "*",
+    "electron-prebuilt": "*"
   }
 }

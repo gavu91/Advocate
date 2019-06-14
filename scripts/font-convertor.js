@@ -2,7 +2,7 @@ var electron=  require('electron');
 var path=  require('path');
 var remote = require('electron').remote;
 const ipc = electron.ipcRenderer;
-
+const url = require('url');
 //receive margins data from popupWindow
 remote.ipcMain.on('margins', (event, data) => { 
     $("#transliterateTextarea").css({
@@ -29,11 +29,12 @@ function openMarginDialog(){
         height: 282
     });
     popupWindow.setMenu(null);
-    const filePath = path.join(
-                            'file://', 
-                            process.cwd(), 
-                            'Modal/page-layout.html'
-                        );
+    var rootfolder = __dirname.replace("\Pages","");
+    const filePath = url.format({
+        pathname: path.join(rootfolder, 'Modal/page-layout.html'),
+        protocol: 'file:',
+        slashes: true
+    })
     popupWindow.loadURL(filePath);
     popupWindow.show(); 
 }
