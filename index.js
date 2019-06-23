@@ -1,8 +1,13 @@
 const electron = require('electron');
 const path = require('path');
+const fs = require('fs');
 const url = require('url');
 const ipc = require('electron').ipcRenderer;
-const { app, BrowserWindow, Menu, ipcMain } = electron;
+global.sharedObj = {filePath: ''};
+
+const { app, BrowserWindow, Menu, ipcMain,dialog } = electron;
+
+const resourcesPath = process.resourcesPath;
 
 if (handleSquirrelEvent(app)) {
   // squirrel event handled and app will exit in 1000ms, so don't do anything else
@@ -75,11 +80,16 @@ function handleSquirrelEvent(application) {
 
 
 let mainWindow; 
+let mainMenu;
 // SET ENV
 process.env.NODE_ENV = 'development';
 // Listen for app to be ready
 app.on('ready', function () {
-  mainWindow = new BrowserWindow({});
+  mainWindow = new BrowserWindow({  
+    // minimizable: false,
+    //     maximizable: false,
+    //     resizable:false
+  });
   mainWindow.maximize();
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
@@ -91,13 +101,14 @@ app.on('ready', function () {
     app.quit();
   });
   // Build menu from template
-  const mainMenu = Menu.buildFromTemplate(loginMenuTemplate);
+  mainMenu = Menu.buildFromTemplate(loginMenuTemplate);
   // Insert menu
-  Menu.setApplicationMenu(mainMenu); 
+ Menu.setApplicationMenu(mainMenu);  
+  mainWindow.setMenu(mainMenu); 
 });
 
 ipcMain.on('login', function() { 
-  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate); 
+  mainMenu = Menu.buildFromTemplate(mainMenuTemplate); 
   Menu.setApplicationMenu(mainMenu);
 });
 
@@ -129,10 +140,35 @@ const mainMenuTemplate = [
     label: 'Drafts',
     submenu:[
       {
-        label: 'New Blank Draft'
+        label: 'New Blank Draft',
+        click() {
+          mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'Pages/font-converter.html'),
+            protocol: 'file:',
+            slashes: true
+          }));
+        }
       },
       {
-        label: 'Open Draft'
+        label: 'Open Draft',
+        click(){ 
+          dialog.showOpenDialog({
+            properties: ['openFile'],
+            defaultPath:resourcesPath + "/Draft",
+            filters: [
+              {name: "Drafts", extensions: ["adraft"]},
+            ]
+          }, function (files) {
+              if (files !== undefined) {
+                global.sharedObj.filePath = files[0]; 
+                mainWindow.loadURL(url.format({
+                  pathname: path.join(__dirname, 'Pages/font-converter.html'),
+                  protocol: 'file:',
+                  slashes: true
+                }));
+              } 
+          });
+        }
       },
       {
         label: 'Upload Draft'
@@ -154,14 +190,7 @@ const mainMenuTemplate = [
     label: 'Convertor',
     submenu:[
       {
-        label: 'Font Convertor',
-        click() {
-          mainWindow.loadURL(url.format({
-            pathname: path.join(__dirname, 'Pages/font-converter.html'),
-            protocol: 'file:',
-            slashes: true
-          }));
-        }
+        label: 'Font Convertor' 
       },
       {
         label: 'Text - PDF Convertor'
@@ -300,10 +329,35 @@ const loginMenuTemplate = [
     label: 'Drafts',
     submenu:[
       {
-        label: 'New Blank Draft'
+        label: 'New Blank Draft',
+        click() { 
+          mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'Pages/font-converter.html'),
+            protocol: 'file:',
+            slashes: true
+          }));
+        }
       },
       {
-        label: 'Open Draft'
+        label: 'Open Draft',
+        click(){
+          dialog.showOpenDialog({
+            properties: ['openFile'],
+            defaultPath:resourcesPath + "/Draft",
+            filters: [
+              {name: "Drafts", extensions: ["adraft"]},
+            ]
+          }, function (files) {
+              if (files !== undefined) {
+                global.sharedObj.filePath = files[0]; 
+                mainWindow.loadURL(url.format({
+                  pathname: path.join(__dirname, 'Pages/font-converter.html'),
+                  protocol: 'file:',
+                  slashes: true
+                }));
+              }  
+          });
+        }
       },
       {
         label: 'Upload Draft'
@@ -325,14 +379,7 @@ const loginMenuTemplate = [
     label: 'Convertor',
     submenu:[
       {
-        label: 'Font Convertor',
-        click() {
-          mainWindow.loadURL(url.format({
-            pathname: path.join(__dirname, 'Pages/font-converter.html'),
-            protocol: 'file:',
-            slashes: true
-          }));
-        }
+        label: 'Font Convertor'
       },
       {
         label: 'Text - PDF Convertor'

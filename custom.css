@@ -39,7 +39,7 @@ section.content{
     content: '0' !important;
 }
 
-.doc .docpage {
+/* .doc .docpage {
     margin-top: 15px;
     width: 100%;
     padding: 1in;
@@ -47,5 +47,74 @@ section.content{
     position: relative;
     font-size: 14px; 
   }
+ */
+.page{
+    margin-top: 2em;
+}
+ .editor{
+     padding: 10px 0;
+ }
+ @page { margin: 0 }
+div.editor { margin: 0 }
+.sheet {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  padding: 1in; 
+}
 
+.shape{
+    text-align: center;
+}
+
+.shapecircle {
+    width: 200px;
+    height: 200px;
+    background-color: #40a977;
+    color: white;
+    border-radius: 50%;
+    vertical-align: middle;
+    display: table-cell;
+    overflow: hidden;
+    word-break: break-all;
+    padding: 35px;
+  }
+
+/** Paper sizes **/
+div.editor.A4               .sheet { width: 210mm; height: 296mm;  }
+div.editor.A4.landscape     .sheet { width: 297mm; height: 209mm }
+div.editor.legal            .sheet { width: 216mm; height: 356mm }
+div.editor.legal.landscape  .sheet { width: 357mm; height: 215mm }
+
+/** Padding area **/
+.sheet.padding-10mm { padding: 10mm }
+.sheet.padding-15mm { padding: 15mm }
+.sheet.padding-20mm { padding: 20mm }
+.sheet.padding-25mm { padding: 25mm }
+
+.pagecontent{
+    outline: none;
+}
+
+/** For screen preview **/
+@media screen {
+  div.editor { background: #e0e0e0 }
+  .sheet {
+    background: white;
+    box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+    margin: 5mm auto;
+  }
+}
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+           div.editor.A3.landscape { width: 420mm }
+  div.editor.A3, div.editor.A4.landscape { width: 297mm }
+  div.editor.A4, div.editor.A5.landscape { width: 210mm }
+  div.editor.A5                    { width: 148mm }
+  div.editor.letter, div.editor.legal    { width: 216mm }
+  div.editor.letter.landscape      { width: 280mm }
+  div.editor.legal.landscape       { width: 357mm }
+}
 

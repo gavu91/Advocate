@@ -74,17 +74,16 @@
     <script type="text/javascript">
       var electron=  require('electron');
         var remote = require('electron').remote; 
-        const ipc = electron.ipcRenderer;
-      
+        const ipc = electron.ipcRenderer; 
         function applyMargins(){
             ipc.send('margins', {
                 left:$("#left").val(),
                 right:$("#right").val(),
                 top:$("#top").val(),
                 bottom:$("#bottom").val()
-            });
-            var window = remote.getCurrentWindow();
-            window.close();
+            }); 
+            var subwindow = remote.getCurrentWindow();
+            subwindow.close();   
         }
         </script>
     <script>if (window.module) module = window.module;</script>

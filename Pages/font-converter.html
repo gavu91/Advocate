@@ -11,6 +11,7 @@
     <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="../THEME/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet">
     <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link href="../THEME/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
     <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
     <link href="../THEME/css/style.css" rel="stylesheet">
     <link href="../THEME/css/themes/all-themes.css" rel="stylesheet" />
@@ -39,18 +40,30 @@
 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>
-                                Font Convertor
-                            </h2>
-                        </div>
+                    <div class="card"> 
                         <div class="body">
                             <div>
-                                <button type="button" class="btn btn-default" onclick="saveFile();"><i class="material-icons">save</i> Save</button>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <i class="material-icons">save</i>   Save File <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript:void(0);" onclick="saveFile()" class=" waves-effect waves-block"> Save As PDF</a></li>
+                                        <li><a href="javascript:void(0);" onclick="saveFileAsDraft()" class=" waves-effect waves-block"> Save As Draft</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Insert<span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript:void(0);" onclick="insertShape('shapecircle')" class=" waves-effect waves-block"> Circle</a></li> 
+                                    </ul>
+                                </div>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
+                                <button type="button" class="btn btn-default" onclick="document.execCommand('justifyFull', false,'');"><i class="material-icons">format_align_justify</i></button>
                                 <button type="button" class="btn btn-default" onclick="openMarginDialog();">Margins</button>
                                 <select class="show-tick" onchange="changeFontSize(this)">
                                     <option value="" disabled selected>Font Size</option>
@@ -63,22 +76,26 @@
                                     <option value="xx-large">xx-large</option>
                                 </select>
                                 <div class="btn-group">
-                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                            SUCCESS <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
-                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Another action</a></li>
-                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Something else here</a></li>
-                                            <li role="separator" class="divider"></li>
-                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Separated link</a></li>
-                                        </ul>
-                                    </div>
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Page Style <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript:void(0);" onclick="changeLayout('A4')" class=" waves-effect waves-block">A4</a></li>
+                                        <li><a href="javascript:void(0);" onclick="changeLayout('legal')" class=" waves-effect waves-block">Legal</a></li>
+                                    </ul>
+                                </div>
                             </div> 
-                           
-                            <div class="doc"> 
-                                <div size="A4" contenteditable="true" id="transliterateTextarea"  class="docpage"></div>
-                            </div>
+                            <div class="page" id="mainPage">
+                                <div class="A4 editor" id="editor">
+                                    <div id="printDoc">
+                                        <div class="sheet"> 
+                                            <div class="pagecontent"  contenteditable="true">
+
+                                            </div>  
+                                        </div>  
+                                    </div> 
+                                </div>
+                            </div> 
                         </div>
                     </div>
                 </div>
@@ -93,9 +110,10 @@
     <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.js"></script>
     <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
     <script src="../THEME/plugins/node-waves/waves.js"></script>
+    <script src="../THEME/plugins/sweetalert/sweetalert.min.js"></script>
     <script src="../THEME/js/admin.js"></script>
-    <script src="../THEME/js/demo.js"></script>
-    <script src="../THEME/jspdf.min.js"></script> 
+    <script src="../THEME/js/demo.js"></script> 
+    <script src="../scripts/html2pdf.bundle.min.js"></script>  
     <script src="../scripts/font-convertor.js"></script>  
     <script>if (window.module) module = window.module;</script>
 </body>
