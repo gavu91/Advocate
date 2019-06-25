@@ -38,10 +38,12 @@ $("body").on("click",".sheet",function(e){
             if($(this).find(".shape").length != $(this).find(".divAfterShape").length){
                 var blankDiv = $('<div class="divAfterShape"> <br></div>');
                 blankDiv.insertAfter($(this).find(".pagecontent .shape:last")[0]); 
+                placeCaretAtEnd($(this).find(".pagecontent")[0]);
             }
         }  
-        placeCaretAtEnd($(this).find(".pagecontent")[0]);
     } 
+    if(e.target.className.indexOf("sheet") >= 0)
+        placeCaretAtEnd($(this).find(".pagecontent")[0]); 
 });
 
 function placeCaretAtEnd(el) {
@@ -60,8 +62,7 @@ function placeCaretAtEnd(el) {
         textRange.collapse(false);
         textRange.select();
     }
-}
-
+} 
 
 function insertShape(shape){
     var sheetDiv = '<div class="shape '+shape.toString().toLowerCase()+'"></div>';
@@ -107,11 +108,14 @@ function createNewSheet(){
 } 
 
 $("body").on("keydown","[contenteditable=true]",function(e){ 
-    if(e.keyCode == 9 && e.shiftKey) { 
+    // if(e.keyCode == 9 && e.shiftKey) { 
+    //     document.execCommand('outdent',true,null)
+    //     return false;
+    // } else 
+    if(e.keyCode == 9) { 
+        document.execCommand('insertHtml',false,' &nbsp; &nbsp; &nbsp;')
         return false;
-    } else if(e.keyCode == 9) { 
-        return false;
-    } 
+    }
     if (e.which == 13 && e.shiftKey == false) { 
         if($(this.lastElementChild).hasClass("divAfterShape"))
         {
@@ -155,7 +159,7 @@ placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
  
 remote.ipcMain.on('margins', (event, data) => { 
     margins = data;
-    $(".sheet:last-child .pagecontent").focus();
+    placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
     $(".sheet").css({
         "padding-left":data.left + "in",
         "padding-top":data.top + "in",
@@ -165,7 +169,7 @@ remote.ipcMain.on('margins', (event, data) => {
 });
 
 ipc.on('fontFamily', (event, data) => { 
-    $(".sheet:first-child .pagecontent").focus();
+    placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
     document.execCommand("fontName", false, data ); 
 })
 
@@ -213,14 +217,21 @@ function saveFile(){
     html2pdf().from(element).set(opt).save(); 
 } 
 
-function changeFontSize(obj){
-    $(".sheet:first-child .pagecontent").focus();
-    document.execCommand("fontSize", false, "7");
-    var fontElements = document.getElementsByTagName("font");
-    for (var i = 0, len = fontElements.length; i < len; ++i) {
-        if (fontElements[i].size == "7") {
-            fontElements[i].removeAttribute("size");
-            fontElements[i].style.fontSize =$(obj).val();
+function changeFontSize(obj){ 
+    if(!document.getSelection().isCollapsed)
+    {
+        document.execCommand("fontSize", false, "7");
+        var fontElements = document.getElementsByTagName("font");
+        for (var i = 0, len = fontElements.length; i < len; ++i) {
+            if (fontElements[i].size == "7") {
+                fontElements[i].removeAttribute("size");
+                fontElements[i].style.fontSize =$(obj).val();
+            }
         }
+    }
+    else{  
+        // placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+        var sheetDiv = '<span style="font-size:'+$(obj).val()+'">&#8203;</span>';
+         document.execCommand("insertHTML", false, sheetDiv);
     }
 } 

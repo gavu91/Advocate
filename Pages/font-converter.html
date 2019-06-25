@@ -42,7 +42,7 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card"> 
                         <div class="body">
-                            <div>
+                            <div style="margin-bottom: 1em">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         <i class="material-icons">save</i>   Save File <span class="caret"></span>
@@ -65,15 +65,24 @@
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyFull', false,'');"><i class="material-icons">format_align_justify</i></button>
                                 <button type="button" class="btn btn-default" onclick="openMarginDialog();">Margins</button>
-                                <select class="show-tick" onchange="changeFontSize(this)">
-                                    <option value="" disabled selected>Font Size</option>
-                                    <option value="xx-small">xx-small</option>
-                                    <option value="x-small">x-small</option>
-                                    <option value="small">small</option>
-                                    <option value="medium">medium</option>
-                                    <option value="large">large</option>
-                                    <option value="x-large">x-large</option>
-                                    <option value="xx-large">xx-large</option>
+                                <button type="button" class="btn btn-default" onclick="document.execCommand('outdent', true,'');"><i class="material-icons">format_indent_decrease</i></button>
+                                <button type="button" class="btn btn-default" onclick="document.execCommand('indent', true,'');"><i class="material-icons">format_indent_increase</i></button>
+                                <select class="show-tick font-dropdown" onchange="changeFontSize(this)"> 
+                                    <option value="8pt">8</option>
+                                    <option value="9pt">9</option>
+                                    <option value="10pt">10</option>
+                                    <option value="11pt" selected>11</option>
+                                    <option value="12pt">12</option>
+                                    <option value="14pt">14</option>
+                                    <option value="18pt">18</option>
+                                    <option value="20pt">20</option>
+                                    <option value="22pt">22</option>
+                                    <option value="24pt">24</option>
+                                    <option value="26pt">26</option>
+                                    <option value="28pt">28</option>
+                                    <option value="36pt">36</option>
+                                    <option value="48pt">48</option>
+                                    <option value="72pt">72</option> 
                                 </select>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -84,12 +93,12 @@
                                         <li><a href="javascript:void(0);" onclick="changeLayout('legal')" class=" waves-effect waves-block">Legal</a></li>
                                     </ul>
                                 </div>
-                            </div> 
+                            </div>  
                             <div class="page" id="mainPage">
                                 <div class="A4 editor" id="editor">
                                     <div id="printDoc">
                                         <div class="sheet"> 
-                                            <div class="pagecontent"  contenteditable="true">
+                                            <div class="pagecontent" style="font-size: 11pt"  contenteditable="true">
 
                                             </div>  
                                         </div>  
