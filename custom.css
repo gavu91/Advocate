@@ -39,6 +39,12 @@ section.content{
     content: '0' !important;
 }
 
+table td, table th {
+    border: 1px solid #DDD;
+    padding: 2px 5px;
+    vertical-align: middle;
+}
+
 /* .doc .docpage {
     margin-top: 15px;
     width: 100%;
@@ -47,10 +53,7 @@ section.content{
     position: relative;
     font-size: 14px; 
   }
- */
-.page{
-    margin-top: 2em;
-}
+ */ 
  .editor{
      padding: 10px 0;
  }
@@ -128,5 +131,13 @@ div.editor.legal.landscape  .sheet { width: 357mm; height: 215mm }
 
 .btn-group.bootstrap-select.show-tick.font-dropdown  button.btn.dropdown-toggle.btn-default{
     padding-right: 1em;
+}
+
+.mg0{
+    margin: 0 !important;
+}
+
+.pd0{
+    padding: 0 !important;
 }
 

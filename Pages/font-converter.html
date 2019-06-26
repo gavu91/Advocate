@@ -16,6 +16,7 @@
     <link href="../THEME/css/style.css" rel="stylesheet">
     <link href="../THEME/css/themes/all-themes.css" rel="stylesheet" />
     <link href="../custom.css" rel="stylesheet" />
+    <link href="../swal-forms.css" rel="stylesheet" />
 </head>
 <body class="theme-grey">
     <div class="page-loader-wrapper">
@@ -35,12 +36,11 @@
     </div>
     <div class="overlay"></div>
   
-    <section class="content">
-        <div class="container-fluid">
-
-            <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card"> 
+    <section class="content mg0 pd0" style="margin: 0 !important">
+        <div class="container-fluid mg0 pd0"> 
+            <div class="row clearfix mg0 pd0">
+                <div class="mg0 pd0 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card  mg0 pd0"> 
                         <div class="body">
                             <div style="margin-bottom: 1em">
                                 <div class="btn-group">
@@ -60,6 +60,7 @@
                                         <li><a href="javascript:void(0);" onclick="insertShape('shapecircle')" class=" waves-effect waves-block"> Circle</a></li> 
                                     </ul>
                                 </div>
+                                <button type="button" class="btn btn-default" onclick="insertTable();"><i class="material-icons">grid_on</i></button>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
                                 <button type="button" class="btn btn-default" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
@@ -124,6 +125,7 @@
     <script src="../THEME/js/demo.js"></script> 
     <script src="../scripts/html2pdf.bundle.min.js"></script>  
     <script src="../scripts/font-convertor.js"></script>  
+    <script src="../scripts/swal-forms.js"></script>  
     <script>if (window.module) module = window.module;</script>
 </body>
 

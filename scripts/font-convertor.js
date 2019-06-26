@@ -117,6 +117,7 @@ $("body").on("keydown","[contenteditable=true]",function(e){
         return false;
     }
     if (e.which == 13 && e.shiftKey == false) { 
+        console.log($(this.lastElementChild).hasClass("divAfterShape"));
         if($(this.lastElementChild).hasClass("divAfterShape"))
         {
             var blankDiv = $('<div> <br></div>');
@@ -125,24 +126,38 @@ $("body").on("keydown","[contenteditable=true]",function(e){
             return false;
         } 
     }
-    if(this.className.indexOf("shape") <= 0)
-    {
-        var contentHeight = this.scrollHeight;
-        if (contentHeight > declaredHeight){
-            createNewSheet();
-        }
-        else{
-            if($(".sheet").length != 1){ 
-                var key = event.keyCode || event.charCode;
-                var currentPos = getPos(this);
-                var parentDiv =$(this).parent(); 
-                if(($(this).find("div").length == 0) && currentPos == 0 && (key == 8 || key == 46)){
-                    parentDiv.remove();
-                    placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+    // if(this.className.indexOf("shape") <= 0)
+    // {
+        var key = event.keyCode || event.charCode;
+        if($(".sheet").length != 1){ 
+            var currentPos = getPos(this);
+            var parentDiv =$(this).parent(); 
+            if(($(this).find("div").length == 0) && currentPos == 0 && (key == 8 || key == 46)){
+                parentDiv.remove();
+                placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+                return false;
+            }
+        } 
+        if(!(key == 8 || key == 46)){
+            var contentHeight = this.scrollHeight;
+            if (contentHeight >= declaredHeight){
+                if(e.which == 13) $(this.lastElementChild).remove();
+                if(!$(this).parent().next().hasClass("sheet")){ 
+                    e.preventDefault();
+                    createNewSheet();
+                    // return false;
                 }
-            } 
+                else{
+                    $(this).parent().next().find(".pagecontent").focus();
+                    return false; 
+                }
+            }
         }
-    } 
+       
+        // else{
+            
+        // }
+    // } 
 });
 
 function  getPos(elem) {
@@ -151,7 +166,6 @@ function  getPos(elem) {
     let range = _range.cloneRange()
     range.selectNodeContents(elem)
     range.setEnd(_range.endContainer, _range.endOffset)
-    console.log(range.toString().length);
     return range.toString().length;  
 }
 
@@ -203,9 +217,9 @@ function changeLayout(className){
 function saveFile(){   
     var element =document.createElement("DIV");
     $(".pagecontent").each(function(i,elem){
-        element.innerHTML += $(elem).html();
-        if((i+1) != $(".pagecontent").length)
-            element.innerHTML += '<div class="html2pdf__page-break"></div>';
+        element.innerHTML += $(elem).html(); 
+         if((i+1) != $(".pagecontent").length)
+             element.innerHTML += '<div class="html2pdf__page-break"></div>';
     });
     var opt = {
       margin:       [margins.top,margins.left,margins.bottom,margins.right],
@@ -232,6 +246,40 @@ function changeFontSize(obj){
     else{  
         // placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
         var sheetDiv = '<span style="font-size:'+$(obj).val()+'">&#8203;</span>';
-         document.execCommand("insertHTML", false, sheetDiv);
+        document.execCommand("insertHTML", false, sheetDiv);
     }
 } 
+
+function insertTable(){
+    swal.withForm({
+        title: '',
+        text: '',
+        showCancelButton: true,
+        confirmButtonColor: '#DD6B55',
+        confirmButtonText: 'Add Table',
+        closeOnConfirm: true,
+        formFields: [
+          { id: 'row', placeholder: 'No. of Rows', required: true },
+          { id: 'column', placeholder: 'No. of Columns', required: true }
+        ]
+    }, function (isConfirm) {
+        var row =this.swalForm.row;
+        var column =this.swalForm.column;
+        var div = $("<div></div>");
+        var table = $("<table style='width:100%'></table>");
+        table.appendTo(div);
+        for (let index = 0; index < Number(row); index++) {
+            var tr = $("<tr></tr>"); 
+            var tdWidth =100/ Number(column);
+            for (let index = 0; index < Number(column); index++) { 
+                var td = $("<td style='width:"+tdWidth+"%'><br></td>"); 
+                td.appendTo(tr); 
+            }
+            tr.appendTo(table);
+        } 
+        placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+        document.execCommand("insertHTML", false, div.html());
+        console.log($(".sheet:last-child .pagecontent table tr:first-child td:first-child"));
+        $(".sheet:last-child .pagecontent table tr:first-child td:first-child")[0].focus();
+    })
+}
