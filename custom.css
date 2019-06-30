@@ -141,3 +141,8 @@ div.editor.legal.landscape  .sheet { width: 357mm; height: 215mm }
     padding: 0 !important;
 }
 
+.gotopage{
+    text-align: center;
+    width: 4em;
+}
+
