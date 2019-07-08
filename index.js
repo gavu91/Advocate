@@ -101,9 +101,9 @@ app.on('ready', function () {
     app.quit();
   });
   // Build menu from template
-  mainMenu = Menu.buildFromTemplate(loginMenuTemplate);
+  mainMenu = Menu.buildFromTemplate(loginMenuTemplate); 
   // Insert menu
- Menu.setApplicationMenu(mainMenu);  
+  Menu.setApplicationMenu(mainMenu);  
   mainWindow.setMenu(mainMenu); 
 });
 

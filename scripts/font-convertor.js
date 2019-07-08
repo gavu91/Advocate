@@ -10,8 +10,7 @@ var pageLayout = "a4";
 if(remote.getGlobal('sharedObj').filePath != ""){
     fs.readFile(remote.getGlobal('sharedObj').filePath,"utf8", function read(err, data) {
         if (err) {  
-        }
-        console.log(data);
+        } 
         $("#mainPage").html(data); 
     });
 }
@@ -35,11 +34,17 @@ $("#gotopage").keypress(function(e){
         event.preventDefault(); //stop character from entering input
     }
     if(e.keyCode == 13){  
+        $(".sheet").removeClass("active");
+        $(".sheet").eq(Number($("#gotopage").val()) - 1).addClass("active");
         $(".sheet").eq(Number($("#gotopage").val()) - 1).find(".pagecontent").focus();
     }
 });
 
-$("body").on("mousedown",".pagecontent",function(e){   
+$("body").on("mousedown",".pagecontent",function(e){ 
+    if(e.target.tagName == "TD"){
+        $(e.target).parent().attr("contenteditable","false");
+        $(e.target).parent().find("td").attr("contenteditable","true");
+    } 
     if(e.target.tagName == "TD" && e.which == 3){
         var table = $(e.target).parents("table")[0]; 
         const menuItems = [
@@ -48,16 +53,22 @@ $("body").on("mousedown",".pagecontent",function(e){
                     for (i = 0; i < table.rows[0].cells.length; i++) {
                        var cell = row.insertCell(i);
                        var br = document.createElement('br');
-                       cell.appendChild(br);  
+                       cell.appendChild(br);   
                     }
+                    $(row).attr("contenteditable","false");
+                    $(row).find("td").attr("contenteditable","true");
+                    $(row).find("td").attr("class","tableContent");
                 }}, 
                 {title:'Insert Row Below' ,onclick: function(){
                     var row= table.insertRow(($(e.target).parent().index() + 1));
                     for (i = 0; i < table.rows[0].cells.length; i++) {
                         var cell = row.insertCell(i);
                         var br = document.createElement('br');
-                        cell.appendChild(br);  
+                        cell.appendChild(br);   
                     } 
+                    $(row).attr("contenteditable","false");
+                    $(row).find("td").attr("contenteditable","true");
+                    $(row).find("td").attr("class","tableContent");
                 }},
                 {title:'Delete Row' ,onclick: function(){
                     table.deleteRow($(e.target).parent().index()); 
@@ -67,6 +78,8 @@ $("body").on("mousedown",".pagecontent",function(e){
                         var cell = elem.insertCell($(e.target).index());
                         var br = document.createElement('br');
                         cell.appendChild(br);  
+                        $(cell).attr("contenteditable","true");
+                        $(cell).attr("class","tableContent");
                     });
                     var tdWidth =100/ Number(table.rows[0].cells.length);
                     $(table).find("td").css("width",tdWidth +"%");
@@ -76,6 +89,8 @@ $("body").on("mousedown",".pagecontent",function(e){
                         var cell = elem.insertCell(($(e.target).index() + 1));
                         var br = document.createElement('br');
                         cell.appendChild(br);  
+                        $(cell).attr("contenteditable","true");
+                        $(cell).attr("class","tableContent");
                     });
                     var tdWidth =100/ Number(table.rows[0].cells.length);
                     $(table).find("td").css("width",tdWidth +"%");
@@ -95,7 +110,7 @@ $("body").on("mousedown",".pagecontent",function(e){
 }); 
 
 $("body").on("click",".sheet",function(e){  
-    $("#gotopage").val(($(this).index() + 1));
+    $("#gotopage").val(($(this).index() + 1)); 
     if(document.getSelection().isCollapsed)
     {
         if(e.target.className.indexOf("shape") >= 0)
@@ -105,12 +120,17 @@ $("body").on("click",".sheet",function(e){
             if($(this).find(".shape").length != $(this).find(".divAfterShape").length){
                 var blankDiv = $('<div class="divAfterShape"> <br></div>');
                 blankDiv.insertAfter($(this).find(".pagecontent .shape:last")[0]); 
+                $(".sheet").removeClass("active");
+                $(this).addClass("active");
                 placeCaretAtEnd($(this).find(".pagecontent")[0]);
             }
         }  
     } 
-    if(e.target.className.indexOf("sheet") >= 0)
+    if(e.target.className.indexOf("sheet") >= 0){
+        $(".sheet").removeClass("active");
+        $(this).addClass("active");
         placeCaretAtEnd($(this).find(".pagecontent")[0]);  
+    }
 });
 
 function placeCaretAtEnd(el) {
@@ -141,8 +161,7 @@ function saveFileAsDraft(){
     if (!fs.existsSync(rootDraftfolder)) fs.mkdir(rootDraftfolder,function(err){
         if (err) {
             return console.error(err);
-        }
-        console.log("Directory created successfully!");
+        } 
      });
     swal({
         title: "Save as Draft",
@@ -167,7 +186,8 @@ function saveFileAsDraft(){
 }
 
 function createNewSheet(){
-    var sheetDiv = $('<div class="sheet"></div>'); 
+    $(".sheet").removeClass("active");
+    var sheetDiv = $('<div class="sheet active"></div>'); 
     var pageContentDiv = $('<div class="pagecontent" contenteditable="true"></div>');
     pageContentDiv.appendTo(sheetDiv);
     $(sheetDiv).css({
@@ -178,10 +198,9 @@ function createNewSheet(){
     });
     sheetDiv.appendTo($("#printDoc"));  
     pageContentDiv.focus();
-}  
+}   
 
-$("body").on("keydown",".pagecontent",function(e){    
-    // alert("hdsh");
+function pageContentKeyDown(e){ 
     if(e.keyCode == 9) { 
         document.execCommand('insertHtml',false,' &nbsp; &nbsp; &nbsp;')
         return false;
@@ -200,8 +219,10 @@ $("body").on("keydown",".pagecontent",function(e){
         var currentPos = getPos(this); 
         var parentDiv =$(this).parent(); 
         if(($(this).find("div").length == 0) && currentPos == 0 && (key == 8 || key == 46)){
+            $(".sheet").removeClass("active");
+            $(this).parent().prev().addClass("active");
             parentDiv.remove();
-            placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+            placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
             $("#gotopage").val($(".sheet").length);
             $("#totalPage").html($(".sheet").length); 
             return false;
@@ -219,13 +240,17 @@ $("body").on("keydown",".pagecontent",function(e){
                 return false; 
             }
             else{
+                $(".sheet").removeClass("active");
+                $(this).parent().next().addClass("active");
                 $(this).parent().next().find(".pagecontent").focus();
                 $("#gotopage").val(($(this).parent().index() + 1));
                 return false; 
             }
         }
     } 
-});
+}
+ 
+$(document).on("keydown",".pagecontent",pageContentKeyDown);
 
 function  getPos(elem) {
     elem.focus()
@@ -236,11 +261,11 @@ function  getPos(elem) {
     return range.toString().length;  
 }
 
-placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
  
 remote.ipcMain.on('margins', (event, data) => { 
     margins = data;
-    placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+    placeCaretAtEnd($(".sheet.ative .pagecontent")[0]);
     $(".sheet").css({
         "padding-left":data.left + "in",
         "padding-top":data.top + "in",
@@ -256,7 +281,7 @@ remote.ipcMain.on('margins', (event, data) => {
 var fontFamily = "";
 
 ipc.on('fontFamily', (event, data) => { 
-    placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+    placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
     fontFamily =data;
     document.execCommand("fontName", false, data ); 
 })
@@ -309,8 +334,7 @@ function saveFile(){
         element.innerHTML += $(element2).html();  
          if((i+1) != $(".pagecontent").length)
              element.innerHTML += '<div class="html2pdf__page-break"></div>';
-    }); 
-    console.log(element);
+    });  
     var opt = {
       margin:       0,
       filename:     'myfile.pdf',
@@ -353,70 +377,83 @@ function insertTable(){
           { id: 'column', placeholder: 'No. of Columns', required: true }
         ]
     }, function (isConfirm) { 
-        placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
+        placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
         if(isConfirm){
             var row =this.swalForm.row;
             var column =this.swalForm.column;
-            var div = $("<div></div>");
-            var table = $("<table style='width:100%'></table>");
+            var div = $("<div contenteditable='false'></div>");
+            var table = $("<table style='width:100%'  contenteditable='false'></table>"); 
             table.appendTo(div);
             for (let index = 0; index < Number(row); index++) {
                 var tr = $("<tr></tr>"); 
+                // tr.attr("contenteditable","false");
                 var tdWidth =100/ Number(column);
                 for (let index = 0; index < Number(column); index++) { 
-                    var td = $("<td style='width:"+tdWidth+"%'><br></td>"); 
-                    td.appendTo(tr);  
+                    var td = $("<td class='tableContent' style='width:"+tdWidth+"%'><br></td>"); 
+                    // td.attr("contenteditable","true");
+                    td.appendTo(tr);   
                 }
                 tr.appendTo(table);
-            } 
-            pasteHtmlAtCaret(div.html(), true);
-        } 
-        // document.execCommand("insertHTML", false, div.html()); 
+            }  
+            table.find("tr").each(function(index,elem){
+                $(elem).attr("contenteditable","false");
+            });
+            table.find("td").each(function(index,elem){
+                $(elem).attr("contenteditable","true");
+            });
+             
+            document.execCommand("insertHTML", false, div.html());  
+            var insertedtable=  $(".sheet.active .pagecontent table").eq(($(".sheet.active .pagecontent table").length - 1))[0];
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(insertedtable.firstChild.firstChild.firstChild, 0);
+            range.setEnd(insertedtable.firstChild.firstChild.firstChild, 1);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            insertedtable.firstChild.firstChild.firstChild.focus();  
+        }  
     })
 } 
 
-function pasteHtmlAtCaret(html, selectPastedContent) {
-    var sel, range;
-    if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
+$(document).on("keydown",".tableContent",tableKeyDown);
 
-            var el = document.createElement("div");
-            el.innerHTML = html;
-            var frag = document.createDocumentFragment(), node, lastNode;
-            while ( (node = el.firstChild) ) {
-                lastNode = frag.appendChild(node);
-            }
-            var firstNode = frag.firstChild;
-            range.insertNode(frag);
-             
-            if (lastNode) {
-                range = range.cloneRange(); 
-                range.setStart(firstNode.firstChild.firstChild.firstChild,0);
-                range.setEnd(firstNode.firstChild.firstChild.firstChild,1);
-                sel.removeAllRanges();
-                sel.addRange(range);  
-                // $(firstNode).find("td").each(function(index,elem){ 
-                //     $(document).on("keydown", elem, function(event){
-                //         console.log(elem); 
-                //         event.stopPropagation();
-                //     });
-                // });
-            }
-        }
-    } else if ( (sel = document.selection) && sel.type != "Control") {
-        // IE < 9
-        var originalRange = sel.createRange();
-        originalRange.collapse(true);
-        sel.createRange().pasteHTML(html);
-        if (selectPastedContent) {
-            range = sel.createRange();
-            range.setEndPoint("StartToStart", originalRange);
-            range.select();
-        }
-    }
+function addRow(e){
+    var table = $(e.target).parent().parent()[0];
+    var row= table.insertRow(($(e.target).parent().index() + 1));
+    for (i = 0; i < table.rows[0].cells.length; i++) {
+        var cell = row.insertCell(i);
+        var br = document.createElement('br');
+        cell.appendChild(br);   
+    } 
+    $(row).attr("contenteditable","false");
+    $(row).find("td").attr("contenteditable","true");
+    $(row).find("td").attr("class","tableContent");
+    return row;
 }
+
+function tableKeyDown(e){
+    e.stopPropagation();
+    if(e.keyCode == 9) { 
+        var parentTr =$(e.currentTarget).parent();
+        var nextTr =$(e.currentTarget).parent().next();
+        var totalTd = parentTr.find("td").length;
+        var currentIndex =$(e.currentTarget).index() + 1; 
+        if(totalTd == currentIndex){  
+            if(nextTr.length == 0)
+                nextTr = $(addRow(e));
  
+            nextTr.attr("contenteditable","false");
+            nextTr.find("td").attr("contenteditable","true");
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(nextTr[0].firstChild, 0);
+            range.setEnd(nextTr[0].firstChild, 1);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            nextTr[0].firstChild.focus();
+            return false;
+        }
+    } 
+} 
