@@ -4,8 +4,48 @@ var remote = require('electron').remote;
 const ipc = electron.ipcRenderer;
 const url = require('url'); 
 var fs = require('fs');
-
 var pageLayout = "a4";
+var interact=  require('interactjs'); 
+
+interact('.shape') 
+.resizable({
+    // resize from all edges and corners
+    edges: { left: true, right: true, bottom: true, top: true },
+
+    modifiers: [
+    // keep the edges inside the parent
+    interact.modifiers.restrictEdges({
+        outer: 'parent',
+        endOnly: true,
+    }),
+
+    // minimum size
+    interact.modifiers.restrictSize({
+        min: { width: 50, height: 50 },
+    }),
+    ],
+
+    inertia: true
+})
+.on('resizemove', function (event) {
+    var target = event.target,
+        x = (parseFloat(target.getAttribute('data-x')) || 0),
+        y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+    // update the element's style
+    target.style.width  = event.rect.width + 'px';
+    target.style.height = event.rect.height + 'px';
+
+    // translate when resizing from top or left edges
+    x += event.deltaRect.left;
+    y += event.deltaRect.top;
+
+    target.style.webkitTransform = target.style.transform =
+        'translate(' + x + 'px,' + y + 'px)';
+
+    target.setAttribute('data-x', x);
+    target.setAttribute('data-y', y);
+});
 
 if(remote.getGlobal('sharedObj').filePath != ""){
     fs.readFile(remote.getGlobal('sharedObj').filePath,"utf8", function read(err, data) {
@@ -45,6 +85,44 @@ $("body").on("mousedown",".pagecontent",function(e){
         $(e.target).parent().attr("contenteditable","false");
         $(e.target).parent().find("td").attr("contenteditable","true");
     } 
+    if(e.target.tagName == "DIV" && $(e.target).hasClass("shape")  && e.which == 3){
+        const menuItems = [
+            {   
+                title:'No Fill' ,
+                onclick: function(){
+                    $(e.target).addClass("nofill");
+                }
+            },
+            {   
+                title:'Select Color' ,
+                onclick: function(){ 
+                    $(e.target).removeClass("nofill");
+                    var $this =  $(e.target); 
+                    var options = {
+                        center: true,
+                        fixed: false,
+                        skinClass: "jg_popup_black",
+                        overlay: true,
+                        overlayColor: "#000",
+                        fadeIn: 300,
+                        draggable: true,
+                        resizable: false,
+                        scrolling: "no",
+                        parentScrolling: false,
+                        history:10,
+                        color: $this.css('backgroundColor'),
+                        onPick: function (color) {
+                            $this.css('backgroundColor', '#' + color);
+                        }
+                    };
+                    $.jeegoocolor(options);
+                }
+            }
+        ];
+        new contextualMenu({ 
+            items: menuItems 
+        }); 
+    }
     if(e.target.tagName == "TD" && e.which == 3){
         var table = $(e.target).parents("table")[0]; 
         const menuItems = [
@@ -265,7 +343,6 @@ placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
  
 remote.ipcMain.on('margins', (event, data) => { 
     margins = data;
-    placeCaretAtEnd($(".sheet.ative .pagecontent")[0]);
     $(".sheet").css({
         "padding-left":data.left + "in",
         "padding-top":data.top + "in",
@@ -276,6 +353,7 @@ remote.ipcMain.on('margins', (event, data) => {
     var sheetTop = Number($(".sheet").css('padding-top').replace("px",""));
     var sheetBottom = Number($(".sheet").css('padding-bottom').replace("px",""));
     declaredHeight = sheetHeight - sheetTop - sheetBottom; 
+    placeCaretAtEnd($(".sheet.ative .pagecontent")[0]); 
 });
 
 var fontFamily = "";
@@ -311,6 +389,7 @@ function changeLayout(className){
     pageLayout= className;
     $("#editor").removeAttr("class");
     $("#editor").addClass(className + " editor");
+    placeCaretAtEnd($(".sheet.active .pagecontent")[0])
 }
 
 function saveFile(){   
@@ -403,7 +482,13 @@ function insertTable(){
             });
              
             document.execCommand("insertHTML", false, div.html());  
-            var insertedtable=  $(".sheet.active .pagecontent table").eq(($(".sheet.active .pagecontent table").length - 1))[0];
+            var tableLength =$(".sheet.active .pagecontent table").length;
+            var insertedtable;
+            
+            if(tableLength != 0)
+                tableLength -= 1;
+
+            insertedtable=  $(".sheet.active .pagecontent table").eq(tableLength)[0];
             var range = document.createRange();
             var sel = window.getSelection();
             range.setStart(insertedtable.firstChild.firstChild.firstChild, 0);
@@ -431,6 +516,38 @@ function addRow(e){
     $(row).find("td").attr("class","tableContent");
     return row;
 }
+
+function insertImage(){
+    var currentWindow = remote.getCurrentWindow();
+    var promptWindow = new  remote.BrowserWindow({
+        parent:currentWindow,
+        width: 300,
+        height: 150,
+        show: false,
+        resizable: false,
+        movable: true, 
+        closable: true,
+        minimizable: false,
+        maximizable: false
+      }) 
+      promptWindow.setMenu(null);
+      const promptHtml = '<label for="val">Enter image url</label>\
+      <input id="val" value="" autofocus />\
+      <button onclick="require(\'electron\').ipcRenderer.send(\'prompt-response\', document.getElementById(\'val\').value);window.close()">Ok</button>\
+      <button onclick="window.close()">Cancel</button>\
+      <style>body {font-family: sans-serif;} button {float:right; margin-left: 10px;} label,input {margin-bottom: 10px; width: 100%; display:block;}</style>'
+      promptWindow.loadURL('data:text/html,' + promptHtml)
+      promptWindow.show()
+      promptWindow.on('closed', function() { 
+        promptWindow = null
+      }) 
+        // document.execCommand("insertImage", false, imageUrl);
+}
+
+remote.ipcMain.on('prompt-response', function(event, arg) {
+    if (arg === ''){ arg = null } 
+    document.execCommand("insertImage", false, arg);
+})
 
 function tableKeyDown(e){
     e.stopPropagation();

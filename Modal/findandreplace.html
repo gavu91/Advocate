@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Find and Replace</title>
+    <link rel="icon" href="../THEME/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
+    <link href="../THEME/css/style.css" rel="stylesheet">
+    <link href="../THEME/css/themes/all-themes.css" rel="stylesheet" />
+    <link href="../custom.css" rel="stylesheet" />
+    <style>
+    .card{
+        margin: 0 !important;
+    } 
+    </style>
+</head>
+<body class="theme-grey">
+    <div class="card"> 
+        <div class="body">  
+            <div class="form-group">
+                <div class="form-line">
+                    <input type="text" id="findtext" class="form-control" placeholder="Find">
+                </div>
+            </div> 
+            <div class="form-group">
+                <div class="form-line">
+                    <input type="text" id="replacetext" class="form-control" placeholder="Replace">
+                </div>
+            </div> 
+            <button type="button" onclick="find()" class="btn btn-primary m-t-15 waves-effect">Find</button>
+            <button type="button" onclick="findall()" class="btn btn-primary m-t-15 waves-effect">Find All</button>
+            <button type="button" onclick="replace()" class="btn btn-primary m-t-15 waves-effect">Replace</button>
+            <button type="button" onclick="replaceall()" class="btn btn-primary m-t-15 waves-effect">Replace All</button>
+        </div>
+    </div>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../THEME/plugins/jquery/jquery.min.js"></script>
+    <script src="../THEME/plugins/bootstrap/js/bootstrap.js"></script>
+    <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+    <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="../THEME/plugins/node-waves/waves.js"></script>
+    <script src="../THEME/js/admin.js"></script>
+    <script src="../THEME/js/demo.js"></script>
+    <script src="../THEME/jspdf.min.js"></script>
+    <script src="../scripts/findandreplace.js"></script> 
+    <script>if (window.module) module = window.module;</script>
+</body>
+
+</html>
