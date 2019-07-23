@@ -61,10 +61,62 @@ table td, table th {
 div.editor { margin: 0 }
 .sheet {
   margin: 0;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   box-sizing: border-box;
   padding: 1in; 
+}
+
+.watermark-diagonal{
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.watermark { 
+  color: rgba(0, 0, 0, .1);
+  font-size: 72px;
+  z-index: 9999;
+  cursor: default;
+  display: block;
+  position: absolute; 
+  opacity: 0.3;
+  right: 0;
+  bottom: 50%;
+  left: 0;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+  /* line-height: 100%; */
+  -webkit-pointer-events: none;
+  -moz-pointer-events: none;
+  -ms-pointer-events: none;
+  -o-pointer-events: none;
+  pointer-events: none; 
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+}
+
+.width100{
+  width: 100% !important;
+}
+
+.width33{
+  width: 33.333333% !important;
+}
+
+.width25{
+  width:25% !important;
+}
+
+.pageNumber{
+  right:0;
+  position:absolute; 
 }
 
 .shape{

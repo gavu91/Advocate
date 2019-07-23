@@ -5,47 +5,7 @@ const ipc = electron.ipcRenderer;
 const url = require('url'); 
 var fs = require('fs');
 var pageLayout = "a4";
-var interact=  require('interactjs'); 
-
-interact('.shape') 
-.resizable({
-    // resize from all edges and corners
-    edges: { left: true, right: true, bottom: true, top: true },
-
-    modifiers: [
-    // keep the edges inside the parent
-    interact.modifiers.restrictEdges({
-        outer: 'parent',
-        endOnly: true,
-    }),
-
-    // minimum size
-    interact.modifiers.restrictSize({
-        min: { width: 50, height: 50 },
-    }),
-    ],
-
-    inertia: true
-})
-.on('resizemove', function (event) {
-    var target = event.target,
-        x = (parseFloat(target.getAttribute('data-x')) || 0),
-        y = (parseFloat(target.getAttribute('data-y')) || 0);
-
-    // update the element's style
-    target.style.width  = event.rect.width + 'px';
-    target.style.height = event.rect.height + 'px';
-
-    // translate when resizing from top or left edges
-    x += event.deltaRect.left;
-    y += event.deltaRect.top;
-
-    target.style.webkitTransform = target.style.transform =
-        'translate(' + x + 'px,' + y + 'px)';
-
-    target.setAttribute('data-x', x);
-    target.setAttribute('data-y', y);
-});
+var waterMarkData = null;
 
 if(remote.getGlobal('sharedObj').filePath != ""){
     fs.readFile(remote.getGlobal('sharedObj').filePath,"utf8", function read(err, data) {
@@ -58,9 +18,10 @@ if(remote.getGlobal('sharedObj').filePath != ""){
 var sheetHeight = $(".sheet").outerHeight();
 var sheetTop = Number($(".sheet").css('padding-top').replace("px",""));
 var sheetBottom = Number($(".sheet").css('padding-bottom').replace("px",""));
+var sheetRight = Number($(".sheet").css('padding-right').replace("px",""));
 var declaredHeight = sheetHeight - sheetTop - sheetBottom; 
 
-// $(".pagecontent").css("height",declaredHeight + "px");k
+applyPageNumbers();
 
 var margins = {
     left:1,
@@ -68,6 +29,13 @@ var margins = {
     top:1,
     bottom:1
 };
+
+function applyPageNumbers(){
+    $(".pageNumber").css({"bottom":sheetBottom,"right":sheetRight});
+    $(".sheet").each(function(i,elem){
+        $(elem).find(".pageNumber").html("Page " + (i+1) + " of " + $(".pagecontent").length);
+    });
+}
 
 $("#gotopage").keypress(function(e){
     if(event.which != 8 && e.keyCode != 13&& isNaN(String.fromCharCode(event.which))){
@@ -113,6 +81,31 @@ $("body").on("mousedown",".pagecontent",function(e){
                         color: $this.css('backgroundColor'),
                         onPick: function (color) {
                             $this.css('backgroundColor', '#' + color);
+                        }
+                    };
+                    $.jeegoocolor(options);
+                }
+            },
+            {   
+                title:'Select Border Color' ,
+                onclick: function(){ 
+                    $(e.target).removeClass("nofill");
+                    var $this =  $(e.target); 
+                    var options = {
+                        center: true,
+                        fixed: false,
+                        skinClass: "jg_popup_black",
+                        overlay: true,
+                        overlayColor: "#000",
+                        fadeIn: 300,
+                        draggable: true,
+                        resizable: false,
+                        scrolling: "no",
+                        parentScrolling: false,
+                        history:10,
+                        color: $this.css('borderColor'),
+                        onPick: function (color) {
+                            $this.css('border','1px solid ' + '#' + color);
                         }
                     };
                     $.jeegoocolor(options);
@@ -266,8 +259,12 @@ function saveFileAsDraft(){
 function createNewSheet(){
     $(".sheet").removeClass("active");
     var sheetDiv = $('<div class="sheet active"></div>'); 
-    var pageContentDiv = $('<div class="pagecontent" contenteditable="true"></div>');
+    var watermarkDiv = $('<div class="watermark"></div>'); 
+    var pageNumberDiv = $('<div class="pageNumber"></div>'); 
+    var pageContentDiv = $('<div class="pagecontent" spellcheck="true" contenteditable="true"></div>');
+    watermarkDiv.appendTo(sheetDiv);
     pageContentDiv.appendTo(sheetDiv);
+    pageNumberDiv.appendTo(sheetDiv);
     $(sheetDiv).css({
         "padding-left":margins.left + "in",
         "padding-top":margins.top + "in",
@@ -276,6 +273,8 @@ function createNewSheet(){
     });
     sheetDiv.appendTo($("#printDoc"));  
     pageContentDiv.focus();
+    applyWaterMark();
+    applyPageNumbers();
 }   
 
 function pageContentKeyDown(e){ 
@@ -303,6 +302,7 @@ function pageContentKeyDown(e){
             placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
             $("#gotopage").val($(".sheet").length);
             $("#totalPage").html($(".sheet").length); 
+            applyPageNumbers();
             return false;
         }
     } 
@@ -349,9 +349,10 @@ remote.ipcMain.on('margins', (event, data) => {
         "padding-bottom":data.bottom + "in",
         "padding-right":data.right + "in"
     });
-    var sheetHeight = $(".sheet").outerHeight();
-    var sheetTop = Number($(".sheet").css('padding-top').replace("px",""));
-    var sheetBottom = Number($(".sheet").css('padding-bottom').replace("px",""));
+    sheetHeight = $(".sheet").outerHeight();
+    sheetTop = Number($(".sheet").css('padding-top').replace("px",""));
+    sheetBottom = Number($(".sheet").css('padding-bottom').replace("px",""));
+    sheetRight = Number($(".sheet").css('padding-right').replace("px",""));
     declaredHeight = sheetHeight - sheetTop - sheetBottom; 
     placeCaretAtEnd($(".sheet.ative .pagecontent")[0]); 
 });
@@ -362,7 +363,7 @@ ipc.on('fontFamily', (event, data) => {
     placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
     fontFamily =data;
     document.execCommand("fontName", false, data ); 
-})
+});
 
 function openMarginDialog(){
     var currentWindow = remote.getCurrentWindow();
@@ -389,7 +390,8 @@ function changeLayout(className){
     pageLayout= className;
     $("#editor").removeAttr("class");
     $("#editor").addClass(className + " editor");
-    placeCaretAtEnd($(".sheet.active .pagecontent")[0])
+    placeCaretAtEnd($(".sheet.active .pagecontent")[0]);
+    applyPageNumbers();
 }
 
 function saveFile(){   
@@ -397,23 +399,32 @@ function saveFile(){
     $(".pagecontent").each(function(i,elem){
         var element1 =document.createElement("DIV");
         var element2 =document.createElement("DIV");
+        var pageNumberDiv =document.createElement("DIV");
         var contentElement = $(elem).clone();  
-        $(contentElement).append("<div style='right:0;position:absolute;bottom:-10px'>Page " + (i+1) + " of " + $(".pagecontent").length +"</div>");
+        $(pageNumberDiv).addClass("pageNumber");
+        $(pageNumberDiv).css({"bottom":sheetBottom,"right":sheetRight});
+        $(pageNumberDiv).html("Page " + (i+1) + " of " + $(".pagecontent").length);
+        var waterMarkDiv =$($(".watermark:first-child")[0]).clone();
+        $(waterMarkDiv).css("bottom","0 !important");
+        $(element1).append(waterMarkDiv);
         $(element1).append(contentElement);
+        $(element1).append(pageNumberDiv);
         $(element1).appendTo(element2);
         $(element1).css({
             "padding-left":margins.left + "in",
             "padding-top":margins.top + "in",
             "padding-bottom":margins.bottom + "in",
-            "padding-right":margins.right + "in"
+            "padding-right":margins.right + "in",
+            "position":"relative",
         });
-        $(contentElement).css({"height":declaredHeight + "px",
+        $(contentElement).css({"height":declaredHeight - 10 + "px",
                                 "position":"relative"
                             });
         element.innerHTML += $(element2).html();  
-         if((i+1) != $(".pagecontent").length)
-             element.innerHTML += '<div class="html2pdf__page-break"></div>';
+        if((i+1) < $(".pagecontent").length)
+            element.innerHTML += '<div class="html2pdf__page-break"></div>';
     });  
+    console.log(element);
     var opt = {
       margin:       0,
       filename:     'myfile.pdf',
@@ -437,7 +448,6 @@ function changeFontSize(obj){
         }
     }
     else{  
-        // placeCaretAtEnd($(".sheet:last-child .pagecontent")[0]);
         var sheetDiv = '<span style="font-family:'+fontFamily+';font-size:'+$(obj).val()+'">&#8203;</span>';
         document.execCommand("insertHTML", false, sheetDiv);
     }
@@ -465,11 +475,9 @@ function insertTable(){
             table.appendTo(div);
             for (let index = 0; index < Number(row); index++) {
                 var tr = $("<tr></tr>"); 
-                // tr.attr("contenteditable","false");
                 var tdWidth =100/ Number(column);
                 for (let index = 0; index < Number(column); index++) { 
                     var td = $("<td class='tableContent' style='width:"+tdWidth+"%'><br></td>"); 
-                    // td.attr("contenteditable","true");
                     td.appendTo(tr);   
                 }
                 tr.appendTo(table);
@@ -479,8 +487,7 @@ function insertTable(){
             });
             table.find("td").each(function(index,elem){
                 $(elem).attr("contenteditable","true");
-            });
-             
+            }); 
             document.execCommand("insertHTML", false, div.html());  
             var tableLength =$(".sheet.active .pagecontent table").length;
             var insertedtable;
@@ -529,19 +536,18 @@ function insertImage(){
         closable: true,
         minimizable: false,
         maximizable: false
-      }) 
-      promptWindow.setMenu(null);
-      const promptHtml = '<label for="val">Enter image url</label>\
-      <input id="val" value="" autofocus />\
-      <button onclick="require(\'electron\').ipcRenderer.send(\'prompt-response\', document.getElementById(\'val\').value);window.close()">Ok</button>\
-      <button onclick="window.close()">Cancel</button>\
-      <style>body {font-family: sans-serif;} button {float:right; margin-left: 10px;} label,input {margin-bottom: 10px; width: 100%; display:block;}</style>'
-      promptWindow.loadURL('data:text/html,' + promptHtml)
-      promptWindow.show()
-      promptWindow.on('closed', function() { 
+    }) 
+    promptWindow.setMenu(null);
+    const promptHtml = '<label for="val">Enter image url</label>\
+    <input id="val" value="" autofocus />\
+    <button onclick="require(\'electron\').ipcRenderer.send(\'prompt-response\', document.getElementById(\'val\').value);window.close()">Ok</button>\
+    <button onclick="window.close()">Cancel</button>\
+    <style>body {font-family: sans-serif;} button {float:right; margin-left: 10px;} label,input {margin-bottom: 10px; width: 100%; display:block;}</style>'
+    promptWindow.loadURL('data:text/html,' + promptHtml)
+    promptWindow.show()
+    promptWindow.on('closed', function() { 
         promptWindow = null
-      }) 
-        // document.execCommand("insertImage", false, imageUrl);
+    }) 
 }
 
 remote.ipcMain.on('prompt-response', function(event, arg) {

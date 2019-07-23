@@ -100,18 +100,18 @@
                                     </select> 
                                 </li> 
                                 <li class="list-group-item">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default waves-effect" onclick="document.execCommand('bold', false,'');"><i class="material-icons">format_bold</i></button>
-                                        <button type="button" class="btn btn-default waves-effect" onclick="document.execCommand('italic', false,'');"><i class="material-icons">format_italic</i></button>
-                                        <button type="button" class="btn btn-default waves-effect" onclick="document.execCommand('underline', false,'');"><i class="material-icons">format_underlined</i></button>
+                                    <div class="btn-group width100">
+                                        <button type="button" class="width33 btn btn-default waves-effect" onclick="document.execCommand('bold', false,'');"><i class="material-icons">format_bold</i></button>
+                                        <button type="button" class="width33 btn btn-default waves-effect" onclick="document.execCommand('italic', false,'');"><i class="material-icons">format_italic</i></button>
+                                        <button type="button" class="width33 btn btn-default waves-effect" onclick="document.execCommand('underline', false,'');"><i class="material-icons">format_underlined</i></button>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default  waves-effect" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
-                                        <button type="button" class="btn btn-default  waves-effect" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
-                                        <button type="button" class="btn btn-default  waves-effect" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
-                                        <button type="button" class="btn btn-default  waves-effect" onclick="document.execCommand('justifyFull', false,'');"><i class="material-icons">format_align_justify</i></button>
+                                    <div class="btn-group width100">
+                                        <button type="button" class="width25 btn btn-default  waves-effect" onclick="document.execCommand('justifyLeft', false,'');"><i class="material-icons">format_align_left</i></button>
+                                        <button type="button" class="width25 btn btn-default  waves-effect" onclick="document.execCommand('justifyCenter', false,'');"><i class="material-icons">format_align_center</i></button>
+                                        <button type="button" class="width25 btn btn-default  waves-effect" onclick="document.execCommand('justifyRight', false,'');"><i class="material-icons">format_align_right</i></button>
+                                        <button type="button" class="width25 btn btn-default  waves-effect" onclick="document.execCommand('justifyFull', false,'');"><i class="material-icons">format_align_justify</i></button>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -131,15 +131,14 @@
                                             <li><a href="javascript:void(0);" onclick="insertShape('shapecircle')" class=" waves-effect waves-block"> Circle</a></li> 
                                             <li><a href="javascript:void(0);" onclick="insertShape('shapesquare')" class=" waves-effect waves-block"> Square</a></li> 
                                             <li><a href="javascript:void(0);" onclick="insertShape('shaperectangle')" class=" waves-effect waves-block"> Rectangle</a></li> 
-                                            <li><a href="javascript:void(0);" onclick="document.execCommand('insertHorizontalRule', false,'');" class=" waves-effect waves-block"> Horizontal line</a></li> 
+                                            <li><a href="javascript:void(0);" onclick="placeCaretAtEnd($('.sheet.active .pagecontent')[0]);document.execCommand('insertHorizontalRule', false,'');" class=" waves-effect waves-block"> Horizontal line</a></li> 
                                             <li><a href="javascript:void(0);" onclick="insertImage();" class=" waves-effect waves-block"> Image</a></li> 
                                         </ul>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    <span style="margin-left: 10px"> Pages : </span> <input type="text" id="gotopage" value="1" class="gotopage"> / <label id="totalPage">1</label>
-                                    <div class="btn-group" style="margin-top: 1em">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <div class="btn-group" style="margin-bottom: 1em">
+                                        <button type="button" class="width100 btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                             Page Style <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
@@ -147,6 +146,12 @@
                                             <li><a href="javascript:void(0);" onclick="changeLayout('legal')" class=" waves-effect waves-block">Legal</a></li>
                                         </ul>
                                     </div>
+                                    <div>
+                                        <span> Pages : </span> <input type="text" id="gotopage" value="1" class="gotopage"> / <label id="totalPage">1</label>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <button type="button" onclick="openWaterMark()" class="width100 btn btn-default waves-effect">Watermark</button>
                                 </li>
                             </ul> 
                         </div>  
@@ -159,9 +164,10 @@
                                 <div class="A4 editor" id="editor">
                                     <div id="printDoc">
                                         <div class="sheet active"> 
-                                            <div class="pagecontent" style="font-size: 11pt"  contenteditable="true">
-
+                                            <div class="watermark"></div>
+                                            <div class="pagecontent" style="font-size: 11pt" spellcheck="true"  contenteditable="true">
                                             </div>  
+                                            <div class="pageNumber">Page 1 of 1</div>
                                         </div>  
                                     </div> 
                                 </div>
@@ -169,11 +175,9 @@
                         </div>
                     </div>
                 </div>
-             </div>
-                
-            </div>
-
-        </div>
+             </div> 
+            </div> 
+        </div> 
     </section>
     <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
     <script src="../THEME/plugins/jquery/jquery.min.js"></script>
@@ -183,6 +187,7 @@
     <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
     <script src="../THEME/plugins/node-waves/waves.js"></script>
     <script src="../THEME/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="../THEME/plugins/tinymce/tinymce.js"></script>
     <script src="../THEME/js/admin.js"></script>
     <script src="../THEME/js/demo.js"></script> 
     <script src="../scripts/html2pdf.bundle.min.js"></script>  
@@ -193,6 +198,8 @@
     <script type="text/javascript" src="../jeegoocolor/jeegoocolor/jquery.jeegoocolor.1.0.0.js"></script>
     <script src="../scripts/font-convertor.js"></script>  
     <script src="../scripts/findreplacejs.js"></script>  
+    <script src="../scripts/resizeobjet.js"></script>    
+    <script src="../scripts/watermark.js"></script>    
     <script>if (window.module) module = window.module;</script>
 </body>
 

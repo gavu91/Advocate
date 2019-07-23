@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Watermark Settings</title>
+    <link rel="icon" href="../THEME/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
+    <link href="../THEME/css/style.css" rel="stylesheet">
+    <link href="../THEME/css/themes/all-themes.css" rel="stylesheet" />
+    <link href="../custom.css" rel="stylesheet" />
+    <style>
+    .card{
+        margin: 0 !important;
+    } 
+    .mt10{
+        margin-top: 10px;
+    }
+    </style>
+</head>
+<body class="theme-grey">
+    <div class="card"> 
+        <div class="body">  
+            <div> 
+              <label style="width: 25%"> Text :</label> 
+                <input type="text" id="watermarktext" placeholder=""> 
+            </div> 
+            <div class="mt10"> 
+                <label style="width: 25%"> Font-size :</label> 
+                <input type="number" value="72" step="1" id="watermarktextsize" placeholder=""> px
+            </div> 
+            <div class="mt10">
+                <label style="width: 25%">Layout :</label>
+                <input name="groupW" type="radio" value="Diagonal" id="radio_25" class="with-gap radio-col-blue-grey" />
+                <label for="radio_25">Diagonal</label>
+                <input name="groupW" type="radio" value="Horizontal" checked id="radio_26" class="with-gap radio-col-blue-grey" />
+                <label for="radio_26">Horizontal</label>
+            </div> 
+            <div class="mt10"> 
+                <label style="width: 25%"> Color :</label>
+                <input type="color" id="textColor" placeholder=""> 
+            </div>  
+            <button type="button" style="margin-top:15px" onclick="applyWaterMark()" class="btn btn-primary m-t-15 waves-effect">Okay</button>
+            <button type="button" style="margin-top:15px" onclick="removeWaterMark()" class="btn btn-danger m-t-15 waves-effect">Remove Watermark</button>
+        </div>
+    </div>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../THEME/plugins/jquery/jquery.min.js"></script>
+    <script src="../THEME/plugins/bootstrap/js/bootstrap.js"></script>
+    <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+    <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="../THEME/plugins/node-waves/waves.js"></script>
+    <script src="../THEME/js/admin.js"></script>
+    <script src="../THEME/js/demo.js"></script>
+    <script src="../THEME/jspdf.min.js"></script>
+    <script  type="text/javascript">
+        var electron=require('electron');
+        var remote = electron.remote; 
+        const ipc = electron.ipcRenderer; 
+        function applyWaterMark()
+        {  
+            ipc.send('watermark', {
+                watermarktext:$("#watermarktext").val(),
+                watermarktextsize:$("#watermarktextsize").val(),
+                layout:$("input[name='groupW']:checked").val(),
+                textColor:$("#textColor").val(),
+                isApply:true
+            }); 
+            var subwindow = remote.getCurrentWindow();
+            subwindow.close();   
+        }
+
+        function removeWaterMark(){ 
+            ipc.send('watermark', {
+                watermarktext:$("#watermarktext").val(),
+                watermarktextsize:$("#watermarktextsize").val(),
+                layout:$("input[name='groupW']:checked").val(),
+                textColor:$("#textColor").val(),
+                isApply:false
+            }); 
+            var subwindow = remote.getCurrentWindow();
+            subwindow.close();   
+        } 
+    </script>
+    <script>if (window.module) module = window.module;</script>
+</body>
+
+</html>
