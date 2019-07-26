@@ -6,6 +6,22 @@ const url = require('url');
 var fs = require('fs');
 var pageLayout = "a4";
 var waterMarkData = null;
+ 
+function removeBorder(){
+    var css=  {
+        "outline" : "",
+        "outline-offset" : "",
+    } 
+    $(".sheet").css(css);
+} 
+
+function applyBorder(){
+    var css=  {
+        "outline" : $("#ddlBorderWidth").val() +" " +$("#ddlBorderType").val()+" " + $("#textBorderColor").val(),
+        "outline-offset" : "-3em",
+    } 
+    $(".sheet").css(css);
+}
 
 if(remote.getGlobal('sharedObj').filePath != ""){
     fs.readFile(remote.getGlobal('sharedObj').filePath,"utf8", function read(err, data) {
@@ -28,9 +44,9 @@ var margins = {
     right:1,
     top:1,
     bottom:1
-};
+}; 
 
-function applyPageNumbers(){
+function applyPageNumbers(){ 
     $(".pageNumber").css({"bottom":sheetBottom,"right":sheetRight});
     $(".sheet").each(function(i,elem){
         $(elem).find(".pageNumber").html("Page " + (i+1) + " of " + $(".pagecontent").length);
@@ -62,9 +78,8 @@ $("body").on("mousedown",".pagecontent",function(e){
                 }
             },
             {   
-                title:'Select Color' ,
+                title:'Select Background Color' ,
                 onclick: function(){ 
-                    $(e.target).removeClass("nofill");
                     var $this =  $(e.target); 
                     var options = {
                         center: true,
@@ -80,6 +95,7 @@ $("body").on("mousedown",".pagecontent",function(e){
                         history:10,
                         color: $this.css('backgroundColor'),
                         onPick: function (color) {
+                            $(e.target).removeClass("nofill");
                             $this.css('backgroundColor', '#' + color);
                         }
                     };
@@ -88,8 +104,7 @@ $("body").on("mousedown",".pagecontent",function(e){
             },
             {   
                 title:'Select Border Color' ,
-                onclick: function(){ 
-                    $(e.target).removeClass("nofill");
+                onclick: function(){  
                     var $this =  $(e.target); 
                     var options = {
                         center: true,

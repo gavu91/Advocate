@@ -204,6 +204,11 @@ div.editor.legal.landscape  .sheet { width: 357mm; height: 215mm }
   div.editor.legal.landscape       { width: 357mm }
 }
 
+.font-dropdown{
+  padding: 0.4em;
+  margin-left: 1em;
+}
+
 .btn-group.bootstrap-select.show-tick.font-dropdown {
     width: 5em;
     margin-left: 1em;

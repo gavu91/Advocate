@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
     <link href="../THEME/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../THEME/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet">
+    <!-- <link href="../THEME/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet"> -->
     <link href="../THEME/plugins/node-waves/waves.css" rel="stylesheet" />
     <link href="../THEME/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
     <link href="../THEME/plugins/animate-css/animate.css" rel="stylesheet" />
@@ -42,6 +42,11 @@
         background-color: white !important;
         color: black !important;
         border: 1px solid black !important;
+    }
+    .right-sidebar{
+        height: auto; 
+        
+        top: 0;
     }
     </style>
 </head>
@@ -100,11 +105,12 @@
                                     </select> 
                                 </li> 
                                 <li class="list-group-item">
-                                    <div class="btn-group width100">
-                                        <button type="button" class="width33 btn btn-default waves-effect" onclick="document.execCommand('bold', false,'');"><i class="material-icons">format_bold</i></button>
-                                        <button type="button" class="width33 btn btn-default waves-effect" onclick="document.execCommand('italic', false,'');"><i class="material-icons">format_italic</i></button>
-                                        <button type="button" class="width33 btn btn-default waves-effect" onclick="document.execCommand('underline', false,'');"><i class="material-icons">format_underlined</i></button>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default waves-effect" onclick="document.execCommand('bold', false,'');"><i class="material-icons">format_bold</i></button>
+                                        <button type="button" class="btn btn-default waves-effect" onclick="document.execCommand('italic', false,'');"><i class="material-icons">format_italic</i></button>
+                                        <button type="button" class="btn btn-default waves-effect" onclick="document.execCommand('underline', false,'');"><i class="material-icons">format_underlined</i></button>
                                     </div>
+                                    <button type="button" class="btn btn-default  waves-effect" onclick="findandreplace();"><i class="material-icons">search</i></button>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="btn-group width100">
@@ -153,6 +159,9 @@
                                 <li class="list-group-item">
                                     <button type="button" onclick="openWaterMark()" class="width100 btn btn-default waves-effect">Watermark</button>
                                 </li>
+                                <li class="list-group-item">
+                                    <button type="button" class="width100 js-right-sidebar btn btn-default waves-effect">Page Border</button>
+                                </li>
                             </ul> 
                         </div>  
                     </div>  
@@ -178,12 +187,86 @@
              </div> 
             </div> 
         </div> 
+
+        <aside id="rightsidebar" class="right-sidebar">
+            <ul class="nav nav-tabs tab-nav-right" role="tablist">
+                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">Page Border</a></li>
+                <li role="presentation"><a href="#settings" data-toggle="tab">Settings</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+                    <ul class="demo-choose-skin">
+                        <li>
+                            <div class="mt10 width100"> 
+                                <label style="width: 25%"> Width :</label>
+                                <select id="ddlBorderWidth">
+                                    <option value="0.25pt">0.25 pt</option>
+                                    <option value="0.50pt">0.50 pt</option>
+                                    <option value="0.75pt">0.75 pt</option>
+                                    <option value="1pt">1 pt</option>
+                                    <option value="1.50pt">1.50 pt</option>
+                                    <option value="2.25pt">2.25 pt</option>
+                                    <option value="3pt">3 pt</option>
+                                    <option value="4.5pt">4.5 pt</option> 
+                                    <option value="6pt">6 pt</option> 
+                                </select>
+                            </div>  
+                        </li> 
+                        <li>
+                            <div class="mt10 width100"> 
+                                <label style="width: 25%"> Style :</label>
+                                <select id="ddlBorderType">
+                                    <option value="dotted">Dotted</option>
+                                    <option value="dashed">Dashed</option>
+                                    <option value="solid">Solid</option>
+                                    <option value="double">Double</option>
+                                    <option value="groove">Groove</option>
+                                    <option value="ridge">Ridge</option>
+                                    <option value="inset">Inset</option>
+                                    <option value="outset">Outset</option> 
+                                </select>
+                            </div>  
+                        </li> 
+                        <li>
+                            <div class="mt10 width100"> 
+                                <label style="width: 25%"> Color :</label>
+                                <input type="color" id="textBorderColor" placeholder=""> 
+                            </div>  
+                        </li> 
+                        <li>
+                            <div class="mt10 width100"> 
+                                <button type="button" onclick="applyBorder()" class="btn btn-primary waves-effect">Apply Border</button>
+                                <button type="button" onclick="removeBorder()" class="btn btn-danger waves-effect">Remove Border</button>
+                            </div>  
+                        </li>
+                    </ul>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="settings">   
+                    <div class="demo-settings">
+                        <p>GENERAL SETTINGS</p>
+                        <ul class="setting-list">
+                            <li>
+                                <span>Report Panel Usage</span>
+                                <div class="switch">
+                                    <label><input type="checkbox" checked><span class="lever"></span></label>
+                                </div>
+                            </li>
+                            <li>
+                                <span>Email Redirect</span>
+                                <div class="switch">
+                                    <label><input type="checkbox"><span class="lever"></span></label>
+                                </div>
+                            </li>
+                        </ul> 
+                    </div>
+                </div>
+            </div>
+        </aside>
     </section>
     <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
     <script src="../THEME/plugins/jquery/jquery.min.js"></script>
     <script src="../THEME/plugins/bootstrap/js/bootstrap.js"></script>
-    <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.min.js"></script>
-    <script src="../THEME/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+    
     <script src="../THEME/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
     <script src="../THEME/plugins/node-waves/waves.js"></script>
     <script src="../THEME/plugins/sweetalert/sweetalert.min.js"></script>

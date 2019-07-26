@@ -1,6 +1,6 @@
-var remote = require('electron').remote; 
-const localShortcut = require('electron-localshortcut'); 
-localShortcut.register(remote.getCurrentWindow(),'Ctrl+F', () => {
+var remote = require('electron').remote;  
+
+function findandreplace(){
     var currentWindow = remote.getCurrentWindow();
     var promptWindow = new  remote.BrowserWindow({
         parent:currentWindow, 
@@ -22,7 +22,7 @@ localShortcut.register(remote.getCurrentWindow(),'Ctrl+F', () => {
     })
     promptWindow.loadURL(filePath);
     promptWindow.show();
-})
+}
 
 var TRange=null;
 
