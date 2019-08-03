@@ -3,7 +3,7 @@ function openWaterMark(){
     var promptWindow = new  remote.BrowserWindow({
         parent:currentWindow, 
         width: 400,
-        height: 270, 
+        height: 260, 
         show: false, 
         resizable: false,
         movable: true, 

@@ -5,7 +5,7 @@ function findandreplace(){
     var promptWindow = new  remote.BrowserWindow({
         parent:currentWindow, 
         width: 400,
-        height: 245,
+        height: 235,
         show: false, 
         resizable: false,
         movable: true, 
